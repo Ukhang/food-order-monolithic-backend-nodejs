@@ -13,6 +13,10 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
         });
     };
 
+    // generate the salt
+
+    // Encrypt the password
+
     const createdVendor = await Vendor.create({
         name: name,
         address: address,
