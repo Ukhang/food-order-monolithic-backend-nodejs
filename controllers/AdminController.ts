@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateVendorInput } from "../dto";
 import { Vendor } from "../models";
+import { GeneratePassword, GenerateSalt } from "../utility";
 
 export const CreateVendor = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, address, pinCode, foodType, password, ownerName, phone } = <CreateVendorInput>req.body;
@@ -14,6 +15,8 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
     };
 
     // generate the salt
+    const salt = await GenerateSalt();
+    const userPassword = await GeneratePassword(password, salt);
 
     // Encrypt the password
 
@@ -23,8 +26,8 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
         pinCode: pinCode,
         foodType: foodType,
         email: email,
-        password: password,
-        salt: '123',
+        password: userPassword,
+        salt: salt,
         ownerName: ownerName,
         phone: phone,
         rating: 0,

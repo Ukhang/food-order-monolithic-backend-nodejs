@@ -34,7 +34,16 @@ const VendorSchema = new Schema({
     //     ref: 'food'
     // }]
 }, {
-    timestamps: true
+    toJSON: {
+        transform(doc, ret) {
+            delete ret.password;
+            delete ret.salt;
+            delete ret.__v;
+            delete ret.createdAt;
+            delete ret.updatedAt;
+        }
+    },
+    timestamps: true,
 });
 
 const Vendor = mongoose.model<VendorDoc>('vendor', VendorSchema);
