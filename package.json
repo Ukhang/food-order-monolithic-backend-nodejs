@@ -4,7 +4,8 @@
   "description": "This is the backend for a food ordering system built with Node.js and Express. It provides server-side functionality to support the application's operations.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.ts"
   },
   "keywords": [],
   "author": "",
