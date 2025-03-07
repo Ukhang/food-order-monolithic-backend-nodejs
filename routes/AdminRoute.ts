@@ -17,7 +17,13 @@ router.get("/vendors", async (req, res, next) => {
     next(error);
   }
 });
-router.get("/vendor/:id", GetVendorById);
+router.get("/vendor/:id", async (req, res, next) => {
+    try {
+      await GetVendorById(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+});
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.json({ message: "Hello from admin" });
