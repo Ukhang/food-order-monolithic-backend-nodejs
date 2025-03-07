@@ -9,7 +9,7 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
     const existingVendor = await Vendor.findOne({ email });
 
     if (existingVendor !== null) {
-        res.status(400).json({
+        return res.status(400).json({
             message: `A Vendor already exists with the email ID: ${existingVendor.email}`
         });
     };
@@ -19,7 +19,6 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
     const userPassword = await GeneratePassword(password, salt);
 
     // Encrypt the password
-
     const createdVendor = await Vendor.create({
         name: name,
         address: address,
@@ -35,15 +34,17 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
         coverImages: [],
     });
 
-    res.status(201).json(createdVendor);
+    return res.status(201).json(createdVendor);
 };
 
 export const GetVendors = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        res.status(201).json({ message: "ভেন্ডর সফলভাবে তৈরি হয়েছে" });
-    } catch (error) {
-        next(error);
+    const vendors = await Vendor.find();
+    
+    if (vendors !== null) {
+        return res.status(200).json(vendors);
     }
+
+    return res.status(404).json({ message: "Vendors data not available" });
 };
 
 export const GetVendorById = async (req: Request, res: Response, next: NextFunction) => {
