@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { VendorLoginInput } from "../dto";
+import { EditVendorInputs, VendorLoginInput } from "../dto";
 import { FindVendor } from "./AdminController";
 import { GenerateSignature, ValidatePassword } from "../utility";
 
@@ -44,7 +44,29 @@ export const GetVendorProfile = async (req: Request, res: Response, next: NextFu
 };
 
 export const UpdateVendorProfile = async (req: Request, res: Response, next: NextFunction) => {
+    const { foodTypes, name, address, phone } = <EditVendorInputs>req.body;
+    const user = req.user;
 
+    if (user) {
+        const existingVendor = await FindVendor(user._id);
+        
+        if (existingVendor !== null) {
+            existingVendor.name = name;
+            existingVendor.foodType = foodTypes;
+            existingVendor.address = address;
+            existingVendor.phone = phone;
+
+            const savedResult = await existingVendor.save();
+            res.status(200).json(savedResult);
+            return;
+        }
+
+        res.status(200).json(existingVendor);
+        return;
+    };
+
+    res.status(401).json({ "message" : "Vendor information not found" });
+    return;
 };
 
 export const UpdateVendorService = async (req: Request, res: Response, next: NextFunction) => {
