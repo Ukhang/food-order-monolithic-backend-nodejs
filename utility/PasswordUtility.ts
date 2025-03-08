@@ -1,5 +1,8 @@
 import bcrypt from 'bcrypt';
 import { Request } from 'express';
+import jwt from "jsonwebtoken";
+import { App_SECRET } from '../config';
+import { AuthPayload } from '../dto/Auth.dto';
 
 
 export const GenerateSalt = async () => {
@@ -16,3 +19,22 @@ export const GeneratePassword = async (password: string, salt: string) => {
 export const ValidatePassword = async (enteredPassword: string, savedPassword: string, salt: string) => {
     return await GeneratePassword(enteredPassword, salt) === savedPassword;
 }
+
+export const GenerateSignature = (payload: any) => {
+    return jwt.sign(payload, App_SECRET, { expiresIn: "1d" });
+};
+
+export const ValidateSignature = async (req: Request) => {
+
+    const signature = req.get('Authorization');
+
+    if (signature) {
+        const payload = await jwt.verify(signature.split(' ')[1], App_SECRET) as AuthPayload;
+        
+        req.user = payload;
+
+        return true;
+    }
+
+    return false;
+};

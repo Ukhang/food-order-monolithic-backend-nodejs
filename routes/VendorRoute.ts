@@ -1,36 +1,15 @@
 import express, { Request, Response, NextFunction } from "express";
 import { GetVendorProfile, UpdateVendorProfile, UpdateVendorService, VendorLogin } from "../controllers";
+import { Authenticate } from "../middlewares/CommonAuth";
 
 const router = express.Router();
 
-router.post("/login", async (req, res, next) => {
-  try {
-    await VendorLogin(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
-router.get("/profile", async (req, res, next) => {
-  try {
-    await GetVendorProfile(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
-router.patch("/profile", async (req, res, next) => {
-  try {
-    await UpdateVendorProfile(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
-router.patch("/service", async (req, res, next) => {
-  try {
-    await UpdateVendorService(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
+router.post("/login", VendorLogin);
+
+router.use(Authenticate);
+router.get("/profile", GetVendorProfile);
+router.patch("/profile", UpdateVendorProfile);
+router.patch("/service", UpdateVendorService);
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.json({ message: "Hello from vendor" });

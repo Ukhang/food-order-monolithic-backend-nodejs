@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { VendorLoginInput } from "../dto";
 import { FindVendor } from "./AdminController";
-import { ValidatePassword } from "../utility";
+import { GenerateSignature, ValidatePassword } from "../utility";
 
 export const VendorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLoginInput>req.body;
@@ -12,17 +12,35 @@ export const VendorLogin = async (req: Request, res: Response, next: NextFunctio
         const validation = await ValidatePassword(password, existingVendor.password, existingVendor.salt);
 
         if (validation) {
-            return res.json(existingVendor);
+            const signature = GenerateSignature({
+                _id: existingVendor.id,
+                email: existingVendor.email,
+                foodTypes: existingVendor.foodType,
+                name: existingVendor.name
+            });
+            res.json(signature);
+            return;
         } else {
-            return res.json({ "message": "Password is not valid" });
+            res.json({ "message": "Password is not valid" });
+            return;
         }
     };
 
-    return res.status(401).json({ message: "Login credential not valid!" });
+    res.status(401).json({ "message" : "Login credential not valid!" });
+    return;
 };
 
-export const GetVendorProfile = async (req: Request, res: Response, next: NextFunction) => {
-    
+export const GetVendorProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const user = req.user;
+
+    if (user) {
+        const existingVendor = await FindVendor(user._id);
+        res.json(existingVendor);
+        return;
+    };
+
+    res.status(401).json({ "message" : "Vendor information not found" });
+    return;
 };
 
 export const UpdateVendorProfile = async (req: Request, res: Response, next: NextFunction) => {
