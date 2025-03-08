@@ -70,5 +70,19 @@ export const UpdateVendorProfile = async (req: Request, res: Response, next: Nex
 };
 
 export const UpdateVendorService = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
 
+    if (user) {
+        const existingVendor = await FindVendor(user._id);
+        
+        if (existingVendor !== null) {
+            existingVendor.serviceAvailable = !existingVendor.serviceAvailable;
+            const savedResult = await existingVendor.save();
+            res.status(200).json(savedResult);
+            return;
+        }
+    };
+
+    res.status(404).json({ "message" : "Vendor information not found" });
+    return;
 };
