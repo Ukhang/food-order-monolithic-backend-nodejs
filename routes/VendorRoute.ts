@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import { GetVendorProfile, UpdateVendorProfile, UpdateVendorService, VendorLogin } from "../controllers";
+import { AddFood, GetVendorProfile, UpdateVendorProfile, UpdateVendorService, VendorLogin } from "../controllers";
 import { Authenticate } from "../middlewares/CommonAuth";
 
 const router = express.Router();
@@ -10,6 +10,9 @@ router.use(Authenticate);
 router.get("/profile", GetVendorProfile);
 router.patch("/profile", UpdateVendorProfile);
 router.patch("/service", UpdateVendorService);
+
+router.post("/food", AddFood);
+router.get("/foods");
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.json({ message: "Hello from vendor" });
