@@ -40,6 +40,7 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
         rating: 0,
         serviceAvailable: false,
         coverImages: [],
+        foods: [],
     });
 
     return res.status(201).json(createdVendor);
