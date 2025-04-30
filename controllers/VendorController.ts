@@ -126,7 +126,14 @@ export const GetFoods = async (req: Request, res: Response, next: NextFunction) 
     const user = req.user;
 
     if (user) {
-        
+       const foods = await Food.find({
+            vendorId: user._id
+       });
+
+       if (foods !== null) {
+            res.json(foods);
+            return;
+       }
     };
 
     res.status(404).json({ "message" : "Foods Information Nof Found" });
